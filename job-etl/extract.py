@@ -1,4 +1,4 @@
-# Import the required library
+# Import libraries
 import requests
 import os
 from selenium import webdriver
@@ -26,6 +26,13 @@ def get_job_list():
 
     # Setup chromedriver 
     wd = webdriver.Chrome()
+   
+    # Bypass redirect
+    while 'authwall' in wd.current_url:
+        print(wd.current_url)
+        time.sleep(1)
+        wd.get(url)
+
     wd.get(JOB_LIST_URL)
 
     # Get the number of jobs available
@@ -38,7 +45,7 @@ def get_job_list():
         wd.execute_script('window.scrollTo(0, document.body.scrollHeight);')
         i = i + 1
         try:
-            wd.find_element(By.XPATH, value='/html/body/main/div/section/button').click()
+            wd.find_element(By.XPATH, value='/html/body/div[1]/div/main/section[2]/button').click()
             time.sleep(5)
         except:
             pass
@@ -46,7 +53,7 @@ def get_job_list():
             
     # Find all the jobs
     job_lists = wd.find_element(By.CLASS_NAME, value='jobs-search__results-list')
-    # return a list
+    # Return a list of jobs
     jobs_elements = job_lists.find_elements(By.TAG_NAME, value='li') 
     
     # Check the number of jobs on the list
@@ -69,15 +76,21 @@ def get_job(id, url):
         return
 
     print(f'Downloading page: {id} {url}')
+    
     # Get page with job list
     response = requests.get(url)
+
+    # Bypass redirecr
+    while 'authwall' in response:
+        print(response)
+        time.sleep(1)
+        response = requests.get(url)
 
     # Print the status code
     print(f"Status code: {response.status_code}")
 
     if response.status_code == 200:
-        # Save the file locally (more about open() in the next lesson)
-
+        # Save the file locally
         print(f"Saving: {file_path}")   
         with open(file_path, "wb") as f:
             f.write(response.content)
