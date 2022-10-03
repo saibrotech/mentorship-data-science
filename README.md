@@ -1,19 +1,15 @@
 # mentorship-data-science
-
 Projeto em Python para análise, ETL e estatística dos dados da Mentoria realizada pela SaibroTech
 
 ### Create environment
-
 `python3 -m venv venv`
 
-Select the interpreter before:
-
+### Install dependencies
 `pip install -r requirements.txt`
 
-## Job
+### Setup chromedriver (ubuntu)
+`sudo apt-get install chromium-chromedriver`
 
 ### ETL
-
 `cd job-etl`
-
 `python execute.py`
