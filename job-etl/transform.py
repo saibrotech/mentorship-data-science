@@ -49,17 +49,17 @@ def html_conversor(id):
             'sector': ''
         }
         
-        null_keys = [7, 8, 9, 10]
+        null_keys = ['level', 'type', 'occupation', 'sector']
         
-        for dict['key'] in null_keys:
-            if len(detail) < 4:
+        for k, v in dict.items():
+            if k in null_keys:
                 try:
                     dict['level'] = detail[0].text.strip()
                     dict['type'] = detail[1].text.strip()
                     dict['occupation'] = detail[2].text.strip()
                     dict['sector'] = detail[3].text.strip()
                 except:
-                    dict['key'] = dict.setdefault(0)
+                    pass
 
         json_conversor(dict)
 
