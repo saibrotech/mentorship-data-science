@@ -9,7 +9,7 @@ JOB_LIST_URL = 'https://www.linkedin.com/jobs/search/?currentJobId=3231313649&f_
 
 BASE_PATH = os.path.abspath(__file__ + '/../')
 DATA_PATH = f'{BASE_PATH}/data/'
-RAW_PATH = DATA_PATH + 'raw/'
+RAW_PATH = DATA_PATH + 'html/'
 
 def create_folder_if_not_exists(path):
     """
@@ -108,6 +108,6 @@ def find_jobs():
 # Main function called inside the execute.py script
 def main():
     print("[Extract] Start")
-    #create_folders()
-    #find_jobs()    
+    create_folders()
+    find_jobs()    
     print("[Extract] End")
