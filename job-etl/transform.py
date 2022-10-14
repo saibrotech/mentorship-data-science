@@ -1,70 +1,85 @@
+# Import libraries
 import os
-import csv
-from datetime import datetime
+import json
+from bs4 import BeautifulSoup
 
-from script.common.tables import JobRawAll
-from script.common.base import session
-from sqlalchemy import text
-
-# Settings
 BASE_PATH = os.path.abspath(__file__ + '/../')
 DATA_PATH = f'{BASE_PATH}/data/'
 RAW_PATH = DATA_PATH + 'raw/'
 
-
-def update_title(input_string):
+jobs = {}
+    
+def access_html_files():
     """
-    Lowercase string fields
+    Accesses extracted files and calls conversor
     """
-    return input_string.capitalize()
-
-
-def update_date_posted(date_input):
-    """
-    Update date format from DD/MM/YYYY to YYYY-MM-DD
-    """
-    current_format = datetime.strptime(date_input, "%d/%m/%Y")
-    new_format = current_format.strftime("%Y-%m-%d")
-    return new_format
+    raw_list = os.listdir(RAW_PATH)
+    
+    for filename in raw_list:
+        with open(f'{RAW_PATH}/{filename}', 'r') as file:
+            html_conversor()
 
 
-def truncate_table():
+def html_conversor():
     """
-    Ensure that "ppr_raw_all" table is always in empty state before running any transformations.
-    And primary key (id) restarts from 1.
+    Converts html data from file into dictionary using beautifulsoup
     """
-    session.execute(
-        text("TRUNCATE TABLE ppr_raw_all;ALTER SEQUENCE ppr_raw_all_id_seq RESTART;")
-    )
-    session.commit()
+    raw_list = os.listdir(RAW_PATH)
+ 
+    for filename in raw_list:
+        with open(f'{RAW_PATH}/{filename}', 'r') as file:
+            soup = BeautifulSoup(file, 'html.parser')
+            name, extension = os.path.splitext(filename)
+            source = soup.find('link')
+            detail = soup.find_all('span', class_='description__job-criteria-text')        
+        
+        jobs = {'id': name,
+                'date': soup.find(class_='posted-time-ago__text').text.strip(),
+                'company' : soup.find('span', class_='topcard__flavor').text.strip(),
+                'title': soup.find('h1').text,
+                'location': soup.find(class_='topcard__flavor--bullet').text.strip(),
+                'link': source.get('href'),
+                'description' : soup.find('div', class_='show-more-less-html__markup').text.strip(),
+                'level': detail[0].text.strip(),
+                'type': detail[1].text.strip(),
+                'occupation': detail[2].text.strip(),
+                'sector': detail[3].text.strip()            
+        }
+        for key, value in jobs.items():
+            print(key,':', value)
+
+#def json_conversor():
+    """
+    Saves dictionary into a json file
+    """
+    #with open('jobs.json', 'w') as save_file:
+    #    json.dump(jobs, save_file, indent=2)
 
 
-def transform_new_data():
+#def transform_and_save_new_data():
     """
-    Apply all transformations for each row in the .csv file before saving it into database
+    Processes transformation to newly acquired data
     """
-    with open(RAW_PATH, mode="r", encoding="windows-1252") as csv_file:
+#    with open(RAW_PATH, mode="r", encoding="windows-1252") as csv_file:
         # Read the new .csv snapshot ready to be processed
-        reader = csv.DictReader(csv_file)
+#        reader = csv.DictReader(csv_file)
         # Initialize an empty list for our PprRawAll objects
-        job_raw_objects = []
-        for row in reader:
+#        job_raw_objects = []
+#        for row in reader:
             # Apply transformations and save as PprRawAll object
-            job_raw_objects.append(
-                JobRawAll(
-                    title = update_title(row['title'])
-                    date_posted = update_date_posted(row['date_posted'])
-                )
-            )
+#            job_raw_objects.append(
+#                JobRawAll(
+#                    title = update_title(row['title'])
+ #                   date_posted = update_date_posted(row['date_posted'])
+#                )
+#            )
         # Bulk save all new processed objects and commit
-        session.bulk_save_objects(job_raw_objects)
-        session.commit()
+        #session.bulk_save_objects(job_raw_objects)
+        #session.commit()
 
 # Main function called inside the execute.py script
 def main():
     print("[Transform] Start")
-    print("[Transform] Remove any old data from ppr_raw_all table")
-    truncate_table()
-    print("[Transform] Transform new data available in ppr_raw_all table")
-    transform_new_data()
+    access_html_files()
+    #json_conversor()
     print("[Transform] End")

@@ -13,7 +13,7 @@ RAW_PATH = DATA_PATH + 'raw/'
 
 def create_folder_if_not_exists(path):
     """
-    Create a new folder if it doesn't exists
+    Create a new folder if it doesn't exist
     """
     print(f'Creating folder: {path}')
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -80,7 +80,7 @@ def get_job(id, url):
     # Get page with job list
     response = requests.get(url)
 
-    # Bypass redirecr
+    # Bypass redirect
     while 'authwall' in response:
         print(response)
         time.sleep(1)
@@ -108,6 +108,6 @@ def find_jobs():
 # Main function called inside the execute.py script
 def main():
     print("[Extract] Start")
-    create_folders()
-    find_jobs()    
+    #create_folders()
+    #find_jobs()    
     print("[Extract] End")
