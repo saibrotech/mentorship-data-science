@@ -52,12 +52,15 @@ def html_conversor(id):
             'link': source.get('href'),
             'description': soup.find('div', class_='show-more-less-html__markup').text.strip(),
         }
-        
+
+        try:
+            script = soup.find('script', type='application/ld+json').string
+            jsondata = json.loads(script)
+            dict['date'] = jsondata['datePosted']
+        except:
+            pass
    
         try:
-            date = soup.find('script', type='application/ld+json').string
-            jsondata = json.loads(date)
-            dict['date'] = jsondata['datePosted']
             dict['level'] = detail[0].text.strip()
             dict['type'] = detail[1].text.strip()
             dict['occupation'] = detail[2].text.strip()
@@ -74,7 +77,7 @@ def json_conversor(dict):
     Saves dictionary into a json file
     """
     with open(f'{JSON_PATH}/{dict["id"]}.json', 'w') as save_file:
-        json.dump(dict, save_file, indent=2)
+        json.dump(dict, save_file, indent=2, ensure_ascii=False)
                
 
 # Main function called inside the execute.py script
