@@ -9,17 +9,17 @@ JOB_LIST_URL = 'https://www.linkedin.com/jobs/search/?currentJobId=3231313649&f_
 
 BASE_PATH = os.path.abspath(__file__ + '/../')
 DATA_PATH = f'{BASE_PATH}/data/'
-RAW_PATH = DATA_PATH + 'raw/'
+HTML_PATH = DATA_PATH + 'html/'
 
 def create_folder_if_not_exists(path):
     """
-    Create a new folder if it doesn't exists
+    Create a new folder if it doesn't exist
     """
     print(f'Creating folder: {path}')
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
-def create_folders():
-    create_folder_if_not_exists(RAW_PATH)
+def create_folder():
+    create_folder_if_not_exists(HTML_PATH)
 
 def get_job_list():
     jobs = []
@@ -69,7 +69,7 @@ def get_job_list():
 
 def get_job(id, url):
 
-    file_path = f'{RAW_PATH}{id}.html'
+    file_path = f'{HTML_PATH}{id}.html'
 
     if os.path.exists(file_path):
         print(f'Job exists {id}')
@@ -80,7 +80,7 @@ def get_job(id, url):
     # Get page with job list
     response = requests.get(url)
 
-    # Bypass redirecr
+    # Bypass redirect
     while 'authwall' in response:
         print(response)
         time.sleep(1)
@@ -108,6 +108,6 @@ def find_jobs():
 # Main function called inside the execute.py script
 def main():
     print("[Extract] Start")
-    create_folders()
+    create_folder()
     find_jobs()    
     print("[Extract] End")
