@@ -51,6 +51,9 @@ def html_conversor(id):
         
    
         try:
+            date = soup.find('script', type='application/ld+json').string
+            jsondata = json.loads(date)
+            dict['date'] = jsondata['datePosted']
             dict['level'] = detail[0].text.strip()
             dict['type'] = detail[1].text.strip()
             dict['occupation'] = detail[2].text.strip()
