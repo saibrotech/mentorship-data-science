@@ -8,6 +8,15 @@ DATA_PATH = f'{BASE_PATH}/data/'
 HTML_PATH = DATA_PATH + 'html/'
 JSON_PATH = DATA_PATH + 'json/'
 
+def create_folder_if_not_exists(path):
+    """
+    Create a new folder if it doesn't exist
+    """
+    print(f'Creating folder: {path}')
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+def create_folder():
+    create_folder_if_not_exists(JSON_PATH)
 
 def transform_and_save_new_data():
     """
@@ -37,16 +46,11 @@ def html_conversor(id):
         
         dict = {
             'id': id,
-            'date': soup.find(class_='posted-time-ago__text').text.strip(),
             'company': soup.find('span', class_='topcard__flavor').text.strip(),
             'title': soup.find('h1').text,
             'location': soup.find(class_='topcard__flavor--bullet').text.strip(),
             'link': source.get('href'),
             'description': soup.find('div', class_='show-more-less-html__markup').text.strip(),
-            'level': '',
-            'type': '',
-            'occupation': '',
-            'sector': ''
         }
         
    
@@ -64,6 +68,7 @@ def html_conversor(id):
         json_conversor(dict)
 
 
+
 def json_conversor(dict):
     """
     Saves dictionary into a json file
@@ -75,5 +80,6 @@ def json_conversor(dict):
 # Main function called inside the execute.py script
 def main():
     print("[Transform] Start")
+    create_folder()
     transform_and_save_new_data()
     print("[Transform] End")
