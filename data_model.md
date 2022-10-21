@@ -18,7 +18,7 @@
 - **id:** Código da empresa - INT(AUTOINCREMENT), NOT NULL
 - **name:** Nome da empresa - VARCHAR(100), NOT NULL
 - **description** Descrição da empresa - VARCHAR(300)
-- **website** Link da empresa - VARCHAR(200), NOT NULL
+- **link** Link da empresa - VARCHAR(200), NOT NULL
 - **sector** Setor de atuação - VARCHAR(100)
 - **size:** Tamanho da empresa - ENUM('S', 'M', 'L', 'XL')
 - **headquarters:** Localização sede da empresa - VARCHAR(100)
