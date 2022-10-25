@@ -1,36 +1,17 @@
 import json
 import os
-from sqlalchemy import *
-from sqlalchemy.orm import declarative_base, mapper, Session
-from sqlalchemy.schema import MetaData
+from sqlalchemy import create_engine, Column, String, exists, Date
+from sqlalchemy.orm import declarative_base, Session
 
 BASE_PATH = os.path.abspath(__file__ + '/../')
 DATA_PATH = f'{BASE_PATH}/data/'
 JSON_PATH = DATA_PATH + 'json/'
 
-def setup_database():
-    """
-    Connect to PostgreSQL database and create tables
-    """
-    engine = create_engine('postgresql+psycopg2://postgres:postgres@localhost:5432/postgres')
-    session = Session(engine)
-    Base = declarative_base()
-    class Job(Base):
-        __tablename__ = "job"
+engine = create_engine(
+    'postgresql+psycopg2://postgres:postgres@localhost:5432/postgres')
+session = Session(engine)
+Base = declarative_base()
 
-        id = Column(Integer, primary_key=True)
-        title = Column(String(255))
-        date_posted = Column(Date)
-        experience_level = Column(String(55))
-        type = Column(String(55))
-        location = Column(String(55))
-        requirements = Column(String(255))
-        link = Column(String(255))
-        category = Column(String(55))
-        company = Column(String(55))
-    Job.__table__.create(bind=engine, checkfirst=True)
-    print('Table created successfuly!')
-    
 
 def read_json():
     """
@@ -40,56 +21,60 @@ def read_json():
     for json_file in json_list:
         id, extension = os.path.splitext(json_file)
         json_file
-        
         print(f'Loading', json_file)
-        data = json.load(open(f'{JSON_PATH}{json_file}'))
-        map_data(data)
+        json_data = json.load(open(f'{JSON_PATH}{json_file}'))
+        insert_data(json_data)
 
-def map_data(data):
-    """
-    Make an association between database table and json data structure
-    """
-    metadata = MetaData()
-    
-    columns = (
-        Column('id', Integer, primary_key=True),
-        Column('title', String(100)),
-        Column('date', Date),
-        Column('level', String(20)),
-        Column('type', String(10)),
-        Column('location', String(100)),
-        Column('description', String(300)),
-        Column('link', String(200)),
-        Column('company', String(100)),
-        Column('category', String(3)),
-    )
-    
-    jobs = Table('jobs', metadata, *columns)    
-    
-    class Jobs(object):
-        def __init__(self, json_file):
-            for key, value in data.iteritems():
-                setattr(self, key, value)
-    
-    mapper(Jobs, jobs)
-    print(f'Job entry mapped successfuly')
-
-def insert_new_jobs():
-    """
-    Insert new jobs to database
-    """
+    session.commit()
 
 
-def delete_old_jobs():
+class Job(Base):
+
+    def __init__(self, json_data):
+        print(type(json_data), json_data.items)
+        for key, value in json_data.items():
+            setattr(self, key, value)
+
+    __tablename__ = "job"
+
+    id = Column(String(), primary_key=True)
+    title = Column(String())
+    date = Column(Date())
+    level = Column(String())
+    type = Column(String())
+    location = Column(String())
+    description = Column(String())
+    link = Column(String())
+    category = Column(String())
+    company = Column(String())
+
+
+def setup_database():
     """
-    Delete jobs that are no longer available
+    Connect to PostgreSQL database and create tables
     """
-   
+    Job.__table__.create(bind=engine, checkfirst=True)
+    print('Table created successfuly!')
+
+
+def insert_data(json_data):
+    """
+    Insert operation: add new data
+    """
+
+    existing = session.query(exists().where(Job.id == json_data['id'])).scalar()
+
+    if not existing:
+        job_row = Job(json_data)
+        session.add(job_row)    
 
 # Main function called inside the execute.py script
 def main():
     print("[Load] Start")
-    print("[Load] Inserting new rows")
+    print("#[Load] Inserting new rows")
     setup_database()
     read_json()
     print("[Load] End")
+
+if __name__ == "__main__":
+    main()

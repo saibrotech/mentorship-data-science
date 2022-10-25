@@ -86,3 +86,7 @@ def main():
     create_folder()
     transform_and_save_new_data()
     print("[Transform] End")
+
+
+if __name__ == "__main__":
+    main()
