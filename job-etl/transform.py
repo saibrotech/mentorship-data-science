@@ -1,6 +1,7 @@
 # Import libraries
 import os
 import json
+import datetime as dt
 from bs4 import BeautifulSoup
 
 BASE_PATH = os.path.abspath(__file__ + '/../')
@@ -51,6 +52,9 @@ def html_conversor(id):
             'location': soup.find(class_='topcard__flavor--bullet').text.strip(),
             'link': source.get('href'),
             'description': soup.find('div', class_='show-more-less-html__markup').text.strip(),
+            'e_date' : os.path.getmtime(html_path),
+            't_date' : dt.datetime.today().strftime('%d/%m/%Y'),
+            'l_date' : ''
         }
 
         try:

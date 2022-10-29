@@ -1,7 +1,8 @@
 import json
 import os
-from sqlalchemy import create_engine, Column, String, exists, Date
+from sqlalchemy import create_engine, Column, String, exists, Date, insert
 from sqlalchemy.orm import declarative_base, Session
+import datetime as dt
 
 BASE_PATH = os.path.abspath(__file__ + '/../')
 DATA_PATH = f'{BASE_PATH}/data/'
@@ -47,6 +48,9 @@ class Job(Base):
     link = Column(String())
     category = Column(String())
     company = Column(String())
+    e_date = Column(Date())
+    t_date = Column(Date())
+    l_date = Column(Date())
 
 
 def setup_database():
@@ -68,6 +72,13 @@ def insert_data(json_data):
         job_row = Job(json_data)
         session.add(job_row)    
 
+    stmt = (
+        insert(Job).
+        values(l_date = dt.datetime.today().strftime('%d/%m/%Y'))
+    )
+    
+    engine.execute(stmt)
+    
 # Main function called inside the execute.py script
 def main():
     print("[Load] Start")
