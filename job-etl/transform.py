@@ -2,6 +2,7 @@
 import os
 import json
 import datetime as dt
+import time
 from bs4 import BeautifulSoup
 
 BASE_PATH = os.path.abspath(__file__ + '/../')
@@ -38,6 +39,9 @@ def html_conversor(id):
     Converts html data from file into dictionary using beautifulsoup
     """
     html_path = f'{HTML_PATH}{id}.html'
+    html_date = os.path.getmtime(html_path)
+    extract_date = dt.datetime.fromtimestamp(html_date).strftime('%d/%m/%Y')
+    transform_date = dt.datetime.today().strftime('%d/%m/%Y')
     print(f'Reading {html_path}')
 
     with open(html_path, 'r') as html_file:
@@ -52,9 +56,8 @@ def html_conversor(id):
             'location': soup.find(class_='topcard__flavor--bullet').text.strip(),
             'link': source.get('href'),
             'description': soup.find('div', class_='show-more-less-html__markup').text.strip(),
-            'e_date' : os.path.getmtime(html_path),
-            't_date' : dt.datetime.today().strftime('%d/%m/%Y'),
-            'l_date' : ''
+            'e_date' : extract_date,
+            't_date' : transform_date,
         }
 
         try:

@@ -38,7 +38,7 @@ class Job(Base):
 
     __tablename__ = "job"
 
-    id = Column(String(), primary_key=True)
+    id = Column(String(), primary_key=True, nullable=False)
     title = Column(String())
     date = Column(Date())
     level = Column(String())
@@ -50,7 +50,7 @@ class Job(Base):
     company = Column(String())
     e_date = Column(Date())
     t_date = Column(Date())
-    l_date = Column(Date())
+    l_date = Column(Date(), default=dt.datetime.today().strftime('%d/%m/%Y'))
 
 
 def setup_database():
@@ -72,12 +72,6 @@ def insert_data(json_data):
         job_row = Job(json_data)
         session.add(job_row)    
 
-    stmt = (
-        insert(Job).
-        values(l_date = dt.datetime.today().strftime('%d/%m/%Y'))
-    )
-    
-    engine.execute(stmt)
     
 # Main function called inside the execute.py script
 def main():
