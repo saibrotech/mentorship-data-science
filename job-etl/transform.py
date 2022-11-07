@@ -40,8 +40,8 @@ def html_conversor(id):
     """
     html_path = f'{HTML_PATH}{id}.html'
     html_date = os.path.getmtime(html_path)
-    extract_date = dt.datetime.fromtimestamp(html_date).strftime('%d/%m/%Y')
-    transform_date = dt.datetime.today().strftime('%d/%m/%Y')
+    extract_date = dt.datetime.fromtimestamp(html_date).strftime('%Y-%m-%d')
+    transform_date = dt.datetime.today().strftime('%Y-%m-%d')
     print(f'Reading {html_path}')
 
     with open(html_path, 'r') as html_file:

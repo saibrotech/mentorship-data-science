@@ -50,7 +50,7 @@ class Job(Base):
     company = Column(String())
     e_date = Column(Date())
     t_date = Column(Date())
-    l_date = Column(Date(), default=dt.datetime.today().strftime('%d/%m/%Y'))
+    l_date = Column(Date(), default=dt.datetime.today().strftime('%Y-%m-%d'))
 
 
 def setup_database():
