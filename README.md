@@ -4,6 +4,12 @@ Projeto em Python para análise, ETL e estatística dos dados da Mentoria realiz
 ### Create environment
 `python3 -m venv venv`
 
+### Start data base
+```
+cd dev\
+docker-compose up
+```
+
 ### Install dependencies
 `pip install -r requirements.txt`
 

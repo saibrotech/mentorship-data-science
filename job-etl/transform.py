@@ -1,6 +1,8 @@
 # Import libraries
 import os
 import json
+import datetime as dt
+import time
 from bs4 import BeautifulSoup
 
 BASE_PATH = os.path.abspath(__file__ + '/../')
@@ -37,6 +39,9 @@ def html_conversor(id):
     Converts html data from file into dictionary using beautifulsoup
     """
     html_path = f'{HTML_PATH}{id}.html'
+    html_date = os.path.getmtime(html_path)
+    extract_date = dt.datetime.fromtimestamp(html_date).strftime('%Y-%m-%d')
+    transform_date = dt.datetime.today().strftime('%Y-%m-%d')
     print(f'Reading {html_path}')
 
     with open(html_path, 'r') as html_file:
@@ -51,6 +56,8 @@ def html_conversor(id):
             'location': soup.find(class_='topcard__flavor--bullet').text.strip(),
             'link': source.get('href'),
             'description': soup.find('div', class_='show-more-less-html__markup').text.strip(),
+            'e_date' : extract_date,
+            't_date' : transform_date,
         }
 
         try:
@@ -86,3 +93,7 @@ def main():
     create_folder()
     transform_and_save_new_data()
     print("[Transform] End")
+
+
+if __name__ == "__main__":
+    main()
