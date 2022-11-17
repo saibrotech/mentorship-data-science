@@ -5,6 +5,7 @@ selenium==4.5.0
 sqlalchemy==1.4.
 ipykernel==6.17.0
 matplotlib==3.6.2
+nltk==3.7
 numpy==1.23.4
 pandas==1.5.1
 seaborn==0.12.1
